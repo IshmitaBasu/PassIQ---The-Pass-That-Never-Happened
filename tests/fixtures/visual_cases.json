@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "source_commit": "4b73468fc5b0f1950f9f66fada70ad3a4f9327cb",
+  "match_id": 3869685,
+  "fixture": "Argentina v France",
+  "cases": {
+    "typical": {
+      "event_id": "59420b0c-94cc-4fb8-86fb-e1105936f6eb",
+      "selection": "configured preview: most visible teammates in the initial vertical-slice match"
+    },
+    "touchline": {
+      "event_id": "5ba6dfab-49f0-4225-bbb6-8b1e27bc729a",
+      "selection": "recorded pass origin at y=80"
+    },
+    "edge_of_pitch": {
+      "event_id": "31ffbd2d-3d6c-4fb2-aa20-744fc4d71b93",
+      "selection": "recorded pass end at x=120"
+    },
+    "ambiguous_receiver_geometry": {
+      "event_id": "50718228-53fb-4f39-a458-9ca03672323b",
+      "selection": "two anonymous visible teammates are similarly close to recorded pass end; no actor identity is asserted"
+    },
+    "sparse_frame": {
+      "event_id": "4b89a1e6-95f3-4bb7-b8f8-0f2977684e28",
+      "selection": "joined frame with zero visible teammate candidates"
+    },
+    "period_direction_switch": {
+      "first_half_event_id": "f651a6c4-55e3-4e0f-a178-59414ba83d6a",
+      "second_half_event_id": "7ff43605-beb7-4a6a-a53e-4c6bb48688ef",
+      "selection": "earliest joined pass in each regulation half for direction-normalization testing"
+    }
+  }
+}

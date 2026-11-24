@@ -1,0 +1,25 @@
+canvas:
+  landscape_px: [1600, 900]
+  portrait_px: [1080, 1920]
+  dpi: 150
+pitch:
+  length: 120
+  width: 80
+  orientation: horizontal
+colors:
+  pitch: "#173F35"
+  line: "#EAF2EF"
+  observed: "#FFFFFF"
+  modeled: "#F5B700"
+  teammate: "#43AA8B"
+  opponent: "#E76F51"
+  actor: "#5DADE2"
+  visible_area: "#B7E4C7"
+typography:
+  family: "DejaVu Sans"
+  min_label_pt: 10
+line_styles:
+  observed: solid
+  modeled: dashed
+required_caption: "Data-based tactical illustration — not match footage"
+

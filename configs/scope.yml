@@ -1,0 +1,20 @@
+project: PassIQ
+competition:
+  name: FIFA World Cup
+  statsbomb_competition_id: 43
+  statsbomb_season_id: 106
+  season: 2022
+initial_vertical_slice:
+  match_id: 3869685
+  fixture: Argentina v France
+  rationale: Final; high-interest, complete event context, and a 360 freeze-frame proof of concept.
+feasibility_match_ids:
+  - 3869685 # Argentina v France, final
+  - 3869519 # Argentina v Croatia, semi-final
+  - 3869354 # England v France, quarter-final
+exclusions:
+  - Events without a valid two-coordinate origin or pass end location.
+  - Frames without visible teammate candidates after excluding the actor.
+  - Set-piece analysis is deferred; raw set-piece rows remain available.
+  - Candidate/recipient identity is never inferred from anonymous 360 actors.
+
