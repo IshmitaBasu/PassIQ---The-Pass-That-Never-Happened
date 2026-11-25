@@ -21,6 +21,7 @@ class SceneSpec:
     actors: list[dict]
     candidates: list[dict]
     decision_status: str
+    ranking_method: str = "high_threat"
 
     def as_dict(self) -> dict:
         return asdict(self)

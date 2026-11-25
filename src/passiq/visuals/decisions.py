@@ -12,10 +12,15 @@ from passiq.paths import project_root
 from passiq.visuals.scene import SceneProvenance, SceneSpec
 
 
-def scene_for_event(event_id: str, root: Path | None = None) -> SceneSpec:
+def scene_for_event(
+    event_id: str, root: Path | None = None, ranking_method: str = "high_threat"
+) -> SceneSpec:
     root = root or project_root()
     ranked = pd.read_parquet(root / "data" / "gold" / "decision_rankings.parquet")
-    rows = ranked[ranked.event_id.eq(event_id)].sort_values("rank_high_threat")
+    rank_column = f"rank_{ranking_method}"
+    if rank_column not in ranked:
+        raise ValueError(f"Unknown ranking method: {ranking_method}")
+    rows = ranked[ranked.event_id.eq(event_id)].sort_values(rank_column)
     if rows.empty:
         raise ValueError(f"No ranked candidates for {event_id}")
     row = rows.iloc[0]
@@ -25,7 +30,7 @@ def scene_for_event(event_id: str, root: Path | None = None) -> SceneSpec:
     con.close()
     manifest = json.loads((root / "manifests" / "source_data.json").read_text())
     candidate_columns = ["candidate_index", "destination_x", "destination_y", "p_success", "xt_delta", "expected_positive_threat", "model_estimated_frontier", "rank_high_threat", "rank_safety_adjusted", "is_nearest_actual_end", "selected_pass_association_confident"]
-    return SceneSpec(SceneProvenance(int(row.match_id), event_id, row.model_version, manifest["source"]["commit"]), (float(row.origin_x), float(row.origin_y)), (float(row.actual_end_x), float(row.actual_end_y)), json.loads(visible_area), actors, rows[candidate_columns].to_dict("records"), str(row.decision_status))
+    return SceneSpec(SceneProvenance(int(row.match_id), event_id, row.model_version, manifest["source"]["commit"]), (float(row.origin_x), float(row.origin_y)), (float(row.actual_end_x), float(row.actual_end_y)), json.loads(visible_area), actors, rows[candidate_columns].to_dict("records"), str(row.decision_status), ranking_method)
 
 
 def render_decision(scene: SceneSpec, output: Path) -> dict:
@@ -44,7 +49,7 @@ def render_decision(scene: SceneSpec, output: Path) -> dict:
         pitch.arrows(*scene.origin, candidate["destination_x"], candidate["destination_y"], ax=axis, color=color, alpha=0.8, width=1.1, headwidth=3, headlength=3, linestyle="--")
         right_side = candidate["destination_x"] > 90
         axis.annotate(
-            f"#{candidate['rank_high_threat']} p={candidate['p_success']:.2f} dxT={candidate['xt_delta']:.3f}",
+            f"#{candidate[f'rank_{scene.ranking_method}']} p={candidate['p_success']:.2f} dxT={candidate['xt_delta']:.3f}",
             (candidate["destination_x"], candidate["destination_y"]),
             xytext=(-5 if right_side else 5, 3),
             textcoords="offset points",
@@ -52,7 +57,7 @@ def render_decision(scene: SceneSpec, output: Path) -> dict:
             color="white",
             fontsize=7,
         )
-    axis.set_title(f"Model-estimated pass options | match {scene.provenance.match_id} | {scene.decision_status.replace('_', ' ')}", fontsize=14, pad=14)
+    axis.set_title(f"Model-estimated {scene.ranking_method.replace('_', ' ')} options | match {scene.provenance.match_id} | {scene.decision_status.replace('_', ' ')}", fontsize=14, pad=14)
     axis.legend(loc="upper right", frameon=True)
     figure.text(0.5, 0.02, "Solid: observed recorded pass | dashed: model-estimated option | data-based tactical illustration, not match footage", ha="center", color="white", fontsize=9)
     output.parent.mkdir(parents=True, exist_ok=True)
