@@ -1,0 +1,19 @@
+{
+  "test": {
+    "brier": 0.11473881834088685,
+    "log_loss": 0.3638316923437524,
+    "roc_auc": 0.813495135657895,
+    "calibration_error": 0.011016187037156861
+  },
+  "test_brier_95pct_match_bootstrap": [
+    0.1045856559118496,
+    0.12323799734293656
+  ],
+  "rows": {
+    "train": 42273,
+    "validation": 10111,
+    "test": 9868,
+    "candidate_scores": 375508
+  },
+  "model_version": "67758888b57e"
+}

@@ -13,7 +13,7 @@ data/raw/
 data/silver/
 data/gold/
 reports/
-models/
+/models/
 *.mp4
 *.gif
 !.gitkeep

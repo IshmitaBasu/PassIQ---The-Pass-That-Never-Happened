@@ -1,0 +1,25 @@
+seed: 20261125
+splits:
+  train_fraction: 0.70
+  validation_fraction: 0.15
+  test_fraction: 0.15
+xpass:
+  features:
+    - origin_x
+    - origin_y
+    - destination_x
+    - destination_y
+    - pass_distance
+    - pass_angle
+    - progression_x
+    - closest_visible_defender_distance
+    - defenders_in_2_5m_corridor
+    - visible_teammate_count
+    - actor_count
+  model: logistic_regression
+  calibration: isotonic_validation_only
+xt:
+  grid: [12, 8]
+  smoothing: 1.0
+uncertainty:
+  bootstrap_match_resamples: 20

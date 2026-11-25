@@ -6,6 +6,7 @@ from pathlib import Path
 
 from passiq.ingest.normalize import normalize_profile
 from passiq.ingest.source import fetch_profile
+from passiq.models.training import train_and_score
 from passiq.quality.qa import build_qa_summary
 from passiq.visuals.phase2 import render_phase2_visuals
 from passiq.visuals.pitches import render_fixture_gallery, render_preview
@@ -25,6 +26,7 @@ def main() -> None:
     gallery.add_argument("--limit", type=int, default=20)
     phase2_visuals = commands.add_parser("phase2-visuals")
     phase2_visuals.add_argument("--output-dir", type=Path, default=Path("reports/phase2"))
+    commands.add_parser("train-models")
     args = parser.parse_args()
     if args.command == "fetch":
         result = fetch_profile(args.profile)
@@ -37,6 +39,8 @@ def main() -> None:
         print(json.dumps(render_preview(args.output), indent=2))
     elif args.command == "phase2-visuals":
         print(json.dumps(render_phase2_visuals(args.output_dir), indent=2))
+    elif args.command == "train-models":
+        print(json.dumps(train_and_score(), indent=2))
     else:
         print(json.dumps(render_fixture_gallery(args.output_dir, args.limit), indent=2))
 

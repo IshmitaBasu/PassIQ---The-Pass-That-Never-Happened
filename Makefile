@@ -1,4 +1,4 @@
-.PHONY: setup data transform dbt qa preview phase2-visuals test
+.PHONY: setup data transform dbt train score qa preview phase2-visuals test
 
 setup:
 	uv sync --extra dev
@@ -11,6 +11,11 @@ transform:
 
 dbt:
 	uv run dbt build --project-dir dbt_passiq --profiles-dir dbt_passiq
+
+train:
+	uv run passiq train-models
+
+score: train
 
 qa:
 	uv run passiq qa

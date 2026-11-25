@@ -1,0 +1,36 @@
+version: 2
+models:
+  - name: stg_matches
+    description: Pinned World Cup 2022 fixture metadata.
+    columns:
+      - name: match_id
+        tests: [not_null, unique]
+  - name: stg_events
+    description: Typed recorded events, including pre-decision source fields.
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_passes
+    description: Typed observed passes; recipients come from source event data.
+    columns:
+      - name: event_id
+        tests: [not_null]
+  - name: stg_360_actors
+    description: Anonymous 360 frame actors; this relation contains no player ID.
+    columns:
+      - name: event_id
+        tests: [not_null]
+      - name: frame_actor_index
+        tests: [not_null]
+  - name: fct_candidate_pass
+    description: One visible anonymous teammate option per joined pass and frame actor.
+    columns:
+      - name: event_id
+        tests: [not_null]
+      - name: candidate_index
+        tests: [not_null]
+  - name: fct_observed_pass_link
+    description: Recorded pass links with source-grounded recipients only.
+    columns:
+      - name: recipient_id
+        tests: [not_null]

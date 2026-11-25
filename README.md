@@ -2,9 +2,9 @@
 
 PassIQ reconstructs the visible passing options around historical StatsBomb 360 events, scores them with transparent models, and presents the chosen action alongside *model-estimated* alternatives. It does not claim that an alternative pass would have succeeded or changed the match.
 
-## Phase 0–2 status
+## Phase 0–3 status
 
-This repository contains the scoped 2022 FIFA World Cup pipeline for source retrieval, immutable raw-file manifests, normalization to Parquet, data-quality reconciliation, dbt/DuckDB candidate marts, and source-grounded visuals. The selected initial proof-of-concept event comes from the Argentina–France final (`3869685`). Source files are fetched only from the commit pinned in `manifests/source_data.json`.
+This repository contains the scoped 2022 FIFA World Cup pipeline for source retrieval, immutable raw-file manifests, normalization to Parquet, dbt/DuckDB candidate marts, and first-release xPass/xT scoring. The selected initial proof-of-concept event comes from the Argentina–France final (`3869685`). Source files are fetched only from the commit pinned in `manifests/source_data.json`.
 
 ## Quick start
 
