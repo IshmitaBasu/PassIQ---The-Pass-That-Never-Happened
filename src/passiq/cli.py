@@ -9,6 +9,7 @@ from passiq.ingest.source import fetch_profile
 from passiq.models.training import train_and_score
 from passiq.quality.qa import build_qa_summary
 from passiq.scoring.rankings import rank_decisions
+from passiq.visuals.animations import render_decision_clip
 from passiq.visuals.decisions import render_audit, render_decision, scene_for_event
 from passiq.visuals.phase2 import render_phase2_visuals
 from passiq.visuals.pitches import render_fixture_gallery, render_preview
@@ -36,6 +37,10 @@ def main() -> None:
     audit = commands.add_parser("render-audit")
     audit.add_argument("--limit", type=int, default=20)
     audit.add_argument("--output-dir", type=Path, default=Path("reports/phase4"))
+    clip = commands.add_parser("render-clip")
+    clip.add_argument("--event-id", required=True)
+    clip.add_argument("--output-dir", type=Path, default=Path("reports/media"))
+    clip.add_argument("--ranking-method", choices=("high_threat", "safety_adjusted"), default="high_threat")
     args = parser.parse_args()
     if args.command == "fetch":
         result = fetch_profile(args.profile)
@@ -56,6 +61,8 @@ def main() -> None:
         print(json.dumps(render_decision(scene_for_event(args.event_id), args.output), indent=2))
     elif args.command == "render-audit":
         print(json.dumps(render_audit(args.limit, args.output_dir), indent=2))
+    elif args.command == "render-clip":
+        print(json.dumps(render_decision_clip(args.event_id, args.output_dir, ranking_method=args.ranking_method), indent=2))
     else:
         print(json.dumps(render_fixture_gallery(args.output_dir, args.limit), indent=2))
 

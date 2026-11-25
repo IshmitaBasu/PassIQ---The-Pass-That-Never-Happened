@@ -13,6 +13,7 @@ if str(APP_ROOT) not in sys.path:
 from components.data import event_catalog, event_label, load_rankings, match_label
 
 from passiq.paths import project_root
+from passiq.visuals.animations import render_decision_clip
 from passiq.visuals.decisions import render_decision, scene_for_event
 
 ROOT = project_root()
@@ -133,7 +134,20 @@ def main() -> None:
     export_one, export_two, export_three = st.columns(3)
     export_one.download_button("Download decision PNG", png_data, png.name, "image/png")
     export_two.download_button("Download decision SVG", svg.read_bytes(), svg.name, "image/svg+xml")
-    export_three.button("Generate Tactical Clip", disabled=True, help="Available after Phase 6 animation export is implemented.")
+    generate_clip = export_three.button("Generate Tactical Clip")
+    media_base = ROOT / "reports" / "media" / f"decision_{selected_event}_{utility}"
+    if generate_clip:
+        with st.spinner("Rendering the 12-second MP4 and GIF preview…"):
+            try:
+                render_decision_clip(selected_event, ranking_method=utility)
+            except (OSError, RuntimeError, ValueError) as error:
+                st.error(f"Clip generation failed: {error}")
+    mp4, gif = media_base.with_suffix(".mp4"), media_base.with_suffix(".gif")
+    if mp4.exists() and gif.exists():
+        st.video(str(mp4))
+        clip_one, clip_two = st.columns(2)
+        clip_one.download_button("Download MP4", mp4.read_bytes(), mp4.name, "video/mp4")
+        clip_two.download_button("Download GIF preview", gif.read_bytes(), gif.name, "image/gif")
 
     with st.expander("Evidence, provenance, and limits"):
         st.json(scene_for_event(selected_event, ranking_method=utility).as_dict()["provenance"])

@@ -1,4 +1,4 @@
-.PHONY: setup data transform dbt train score rank phase4-audit demo qa preview phase2-visuals test
+.PHONY: setup data transform dbt train score rank phase4-audit render-clip demo qa preview phase2-visuals test
 
 setup:
 	uv sync --extra dev
@@ -22,6 +22,9 @@ rank:
 
 phase4-audit:
 	uv run passiq render-audit --limit 20 --output-dir reports/phase4
+
+render-clip:
+	uv run passiq render-clip --event-id $(EVENT_ID) --output-dir reports/media
 
 demo:
 	uv run streamlit run app/Home.py
