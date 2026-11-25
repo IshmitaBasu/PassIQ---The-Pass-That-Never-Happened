@@ -1,0 +1,11 @@
+utilities:
+  high_threat: "expected_positive_threat"
+  safety_adjusted:
+    positive_xt_multiplier: 3.0
+    negative_xt_penalty: 0.10
+sensitivity:
+  probability_penalty: 0.05
+  xt_conservative_multiplier: 0.80
+  corridor_candidate_exclusion_threshold: 0
+association:
+  required: selected_pass_association_confident

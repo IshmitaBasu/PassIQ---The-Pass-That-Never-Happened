@@ -1,4 +1,4 @@
-.PHONY: setup data transform dbt train score qa preview phase2-visuals test
+.PHONY: setup data transform dbt train score rank phase4-audit qa preview phase2-visuals test
 
 setup:
 	uv sync --extra dev
@@ -16,6 +16,12 @@ train:
 	uv run passiq train-models
 
 score: train
+
+rank:
+	uv run passiq rank-decisions
+
+phase4-audit:
+	uv run passiq render-audit --limit 20 --output-dir reports/phase4
 
 qa:
 	uv run passiq qa

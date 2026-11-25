@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import itertools
 import json
 from pathlib import Path
 
@@ -20,7 +21,6 @@ from sklearn.preprocessing import StandardScaler
 
 from passiq.paths import project_root
 
-
 FEATURES = ["origin_x", "origin_y", "destination_x", "destination_y", "pass_distance", "pass_angle", "progression_x", "closest_visible_defender_distance", "defenders_in_2_5m_corridor", "visible_teammate_count", "actor_count"]
 
 
@@ -32,7 +32,7 @@ def _split_matches(match_ids: list[int], seed: int) -> dict[str, list[int]]:
 
 def _ece(y: np.ndarray, p: np.ndarray, bins: int = 10) -> float:
     edges = np.linspace(0, 1, bins + 1); result = 0.0
-    for lo, hi in zip(edges[:-1], edges[1:], strict=True):
+    for lo, hi in itertools.pairwise(edges):
         mask = (p >= lo) & ((p < hi) if hi < 1 else (p <= hi))
         if mask.any(): result += mask.mean() * abs(y[mask].mean() - p[mask].mean())
     return float(result)
@@ -107,7 +107,7 @@ def train_and_score(root: Path | None = None) -> dict:
     rng = np.random.default_rng(config["seed"]); briers=[]; test_ids=np.array(splits["test"])
     for _ in range(config["uncertainty"]["bootstrap_match_resamples"]):
         sampled=rng.choice(test_ids, len(test_ids), replace=True); mask=test.match_id.isin(sampled); briers.append(brier_score_loss(test.loc[mask, "is_complete"], test_p[mask]))
-    metrics = {"test": _metrics(y_test, test_p), "test_brier_95pct_match_bootstrap": [float(np.quantile(briers,.025)), float(np.quantile(briers,.975))], "rows": {k: int(len(v)) for k,v in {"train":train,"validation":validation,"test":test,"candidate_scores":score}.items()}, "model_version": score.model_version.iloc[0]}
+    metrics = {"test": _metrics(y_test, test_p), "test_brier_95pct_match_bootstrap": [float(np.quantile(briers,.025)), float(np.quantile(briers,.975))], "rows": {k: len(v) for k,v in {"train":train,"validation":validation,"test":test,"candidate_scores":score}.items()}, "model_version": score.model_version.iloc[0]}
     report = root / "reports" / "evaluation"; report.mkdir(parents=True, exist_ok=True); (report / "metrics.json").write_text(json.dumps(metrics, indent=2) + "\n")
     models_dir = root / "models"; models_dir.mkdir(exist_ok=True)
     joblib.dump({"model":model,"calibrator":calibrator,"features":FEATURES,"model_version":score.model_version.iloc[0]}, models_dir / "xpass_logistic.joblib")

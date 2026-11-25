@@ -8,6 +8,8 @@ from passiq.ingest.normalize import normalize_profile
 from passiq.ingest.source import fetch_profile
 from passiq.models.training import train_and_score
 from passiq.quality.qa import build_qa_summary
+from passiq.scoring.rankings import rank_decisions
+from passiq.visuals.decisions import render_audit, render_decision, scene_for_event
 from passiq.visuals.phase2 import render_phase2_visuals
 from passiq.visuals.pitches import render_fixture_gallery, render_preview
 
@@ -27,6 +29,13 @@ def main() -> None:
     phase2_visuals = commands.add_parser("phase2-visuals")
     phase2_visuals.add_argument("--output-dir", type=Path, default=Path("reports/phase2"))
     commands.add_parser("train-models")
+    commands.add_parser("rank-decisions")
+    decision = commands.add_parser("render-decision")
+    decision.add_argument("--event-id", required=True)
+    decision.add_argument("--output", type=Path, required=True)
+    audit = commands.add_parser("render-audit")
+    audit.add_argument("--limit", type=int, default=20)
+    audit.add_argument("--output-dir", type=Path, default=Path("reports/phase4"))
     args = parser.parse_args()
     if args.command == "fetch":
         result = fetch_profile(args.profile)
@@ -41,6 +50,12 @@ def main() -> None:
         print(json.dumps(render_phase2_visuals(args.output_dir), indent=2))
     elif args.command == "train-models":
         print(json.dumps(train_and_score(), indent=2))
+    elif args.command == "rank-decisions":
+        print(json.dumps(rank_decisions(), indent=2))
+    elif args.command == "render-decision":
+        print(json.dumps(render_decision(scene_for_event(args.event_id), args.output), indent=2))
+    elif args.command == "render-audit":
+        print(json.dumps(render_audit(args.limit, args.output_dir), indent=2))
     else:
         print(json.dumps(render_fixture_gallery(args.output_dir, args.limit), indent=2))
 
